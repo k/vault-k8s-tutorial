@@ -1,0 +1,100 @@
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-agent-config
+data:
+  vault-agent-config.hcl: |
+    auto_auth {
+      method "kubernetes" {
+        mount_path = "auth/kubernetes"
+        config = {
+          role = "prometheus"
+        }
+      }
+      sink "file" {
+        config = {
+          path = "/home/vault/config-out/.vault-token"
+        }
+      }
+    }
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+spec:
+  serviceAccountName: prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+  configMaps:
+  - vault-agent-config
+  containers:
+  - name: vault-agent-auth
+    image: vault
+    securityContext:
+      runAsUser: 65534
+    volumeMounts:
+      - name: configmap-vault-agent-config
+        mountPath: /etc/vault
+      - name: config-out
+        mountPath: /home/vault/config-out
+    env:
+      - name: VAULT_ADDR
+        value: https://vault:8200
+      - name: VAULT_SKIP_VERIFY
+        value: "true"
+    command: ["vault"]
+    args:
+      [
+        "agent",
+        "-config=/etc/vault/vault-agent-config.hcl",
+        "-log-level=debug",
+      ]
+---
+
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   labels:
+#     app.kubernetes.io/name: vault-prometheus
+#   name: prometheus
+# spec:
+#   backend:
+#     serviceName: prometheus-operated
+#     servicePort: 9090
+#   rules:
+#   - host: prom-vault-test.zooxlabs.com
+#     http:
+#       paths:
+#       - backend:
+#           serviceName: prometheus-operated
+#           servicePort: 9090
+#         path: /
+#   tls:
+#   - hosts:
+#     - prom-vault-test.zooxlabs.com
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: prometheus
+roleRef:
+  kind: ClusterRole
+  name: prometheus-operator-prometheus
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: prometheus
+
