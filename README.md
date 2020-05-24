@@ -43,7 +43,7 @@ Follow the instructions for your platform:
 
 ### Launch the EKS cluster
 
-In your AWS account make sure there is not an existing EKS cluster named `vault`. You can change the name of the cluster in `cluster.yaml`[./cluster.yaml`]. Then run:
+In your AWS account make sure there is not an existing EKS cluster named `vault`. You can change the name of the cluster in [`cluster.yaml`](./cluster.yaml). Then run:
 
 ```bash
 eksctl create cluster -f cluster.yaml
