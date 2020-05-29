@@ -16,7 +16,7 @@ Next lets see how to nicely package these resources together.
 
 ### Helm
 
-[Helm](https://helm.sh/) is the prominent package manager for Kubernetes, which has a [large community of contributors](https://github.com/helm/helm/graphs/contributors) and now has over 800+ charts available for install on the [Helm Hub](https://hub.helm.sh/). It's basically YAML with [moustache templates](https://en.wikipedia.org/wiki/Mustache_(template_system)) customized with a light programming language packaged in reusable modules that can be configured for your needs. There are three upstream helm charts that are used in this project:
+[Helm](https://helm.sh/) is the prominent package manager for Kubernetes, which has a [large community of contributors](https://github.com/helm/helm/graphs/contributors) and now has over 800+ charts available for install on the [Helm Hub](https://hub.helm.sh/). It's basically YAML with [moustache templates](https://en.wikipedia.org/wiki/Mustache_(template_system)) customized with a light programming language packaged in reusable modules that can be configured for your needs. There are two upstream helm charts that are used in this project:
 * [Vault Operator](https://hub.helm.sh/charts/banzaicloud-stable/vault-operator) by Banzai Cloud
 * [Prometheus Operator](https://hub.helm.sh/charts/bitnami/prometheus-operator) by CoreOS
 
